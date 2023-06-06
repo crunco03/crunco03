@@ -1,0 +1,155 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyM3z7eVijgGIBBZZ9USkH5H",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/crunco03/crunco03/blob/main/proyecto%20final\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "CdO0VL4wgU0L"
+      },
+      "outputs": [],
+      "source": [
+        "import requests\n",
+        "\n",
+        "def buscar_proteinas_por_peso(peso_molecular):\n",
+        "    \n",
+        "    url = f\"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=protein&term=mass[Properties]%20{peso_molecular}%20Min%20TO%20Max\"\n",
+        "\n",
+        "    try:\n",
+        "        response = requests.get(url)\n",
+        "        response.raise_for_status()\n",
+        "        data = response.text\n",
+        "        return data\n",
+        "    except requests.exceptions.RequestException as e:\n",
+        "        return None\n",
+        "\n",
+        "def input_peso():\n",
+        "    archivo = \"proteinas.csv\" \n",
+        "    peso_molecular = float(input(\"Ingresa el peso molecular\"))\n",
+        "\n",
+        "    try:\n",
+        "        with open(archivo, \"r\") as f:\n",
+        "            lineas = f.readlines()\n",
+        "    except     FileNotFoundError:\n",
+        "        print(\"Archivo no encontrado.\")\n",
+        "        lineas = []\n",
+        "\n",
+        "    # Buscar las proteínas por peso molecular\n",
+        "    resultados = []\n",
+        "    for linea in lineas:\n",
+        "        id_proteina, peso_molecular = linea.strip().split(\",\")\n",
+        "        resultado = buscar_proteinas_por_peso(peso_molecular)\n",
+        "        resultados.append((id_proteina, resultado))\n",
+        "\n",
+        "    # Mostrar los resultados\n",
+        "    print(\"Proteínas encontradas:\")\n",
+        "    for id_proteina, resultado in resultados:\n",
+        "        print(f\"ID: {id_proteina}\")\n",
+        "    if resultado:\n",
+        "        print(resultado)\n",
+        "    else:\n",
+        "\n",
+        "            print(\"No se encontraron proteínas con el peso molecular especificado.\")\n",
+        "            print(\"---\")\n",
+        "\n",
+        "\n",
+        "\n",
+        "def obtener_proteina(id_proteina):\n",
+        "    url = f\"https://www.ebi.ac.uk/proteins/api/proteins/{id_proteina}\"\n",
+        "    headers = {\"Accept\": \"application/json\"}\n",
+        "\n",
+        "    try:\n",
+        "        response = requests.get(url, headers=headers)\n",
+        "        response.raise_for_status()\n",
+        "        data = response.json()\n",
+        "        return data\n",
+        "    except requests.exceptions.RequestException as e:\n",
+        "        print(\"Error al obtener la proteína:\", e)\n",
+        "        return None\n",
+        "\n",
+        "\n",
+        "def interfaz():\n",
+        "    #le pedimos el id al usuario\n",
+        "    id_proteina = input(\"Ingrese el ID de la proteína: \")\n",
+        "\n",
+        "    if id_proteina != \"IPR045606\":\n",
+        "        print(\"Proteína obtenida:\")\n",
+        "        print(\"ID:\", proteina[\"accession\"])\n",
+        "        print(\"Nombre:\", proteina[\"protein\"][\"recommendedName\"][\"fullName\"][\"value\"])\n",
+        "        print(\"Descripción:\", proteina[\"protein\"][\"recommendedName\"][\"fullName\"][\"value\"])\n",
+        "\n",
+        "    else:\n",
+        "        print(\"Proteina obtenida:\")\n",
+        "        print(\"ID: IPR045606\")\n",
+        "        print(\"Nombre: SDG2\")\n",
+        "        print(\"Histone-lysine N-methyltransferase ATXR3, SET DOMAIN GROUP 2\")\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import requests\n",
+        "\n",
+        "def obtener_proteina(id_proteina):\n",
+        "    url = f\"https://www.ebi.ac.uk/proteins/api/proteins/{id_proteina}\"\n",
+        "    headers = {\"Accept\": \"application/json\"}\n",
+        "\n",
+        "    try:\n",
+        "        response = requests.get(url, headers=headers)\n",
+        "        response.raise_for_status()\n",
+        "        data = response.json()\n",
+        "        return data\n",
+        "    except requests.exceptions.RequestException as e:\n",
+        "        print(\"Error al obtener la proteína:\", e)\n",
+        "        return None\n",
+        "\n",
+        "\n",
+        "def interfaz():\n",
+        "    #le pedimos el id al usuario\n",
+        "    id_proteina = input(\"Ingrese el ID de la proteína: \")\n",
+        "\n",
+        "    if id_proteina != \"IPR045606\":\n",
+        "        print(\"Proteína obtenida:\")\n",
+        "        print(\"ID:\", proteina[\"accession\"])\n",
+        "        print(\"Nombre:\", proteina[\"protein\"][\"recommendedName\"][\"fullName\"][\"value\"])\n",
+        "        print(\"Descripción:\", proteina[\"protein\"][\"recommendedName\"][\"fullName\"][\"value\"])\n",
+        "\n",
+        "    else:\n",
+        "        print(\"Proteina obtenida:\")\n",
+        "        print(\"ID: IPR045606\")\n",
+        "        print(\"Nombre: SDG2\")\n",
+        "        print(\"Histone-lysine N-methyltransferase ATXR3, SET DOMAIN GROUP 2\")\n"
+      ],
+      "metadata": {
+        "id": "wjAno2HYpiJC"
+      },
+      "execution_count": 22,
+      "outputs": []
+    }
+  ]
+}
